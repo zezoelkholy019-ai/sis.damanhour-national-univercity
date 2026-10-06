@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>تسجيل الدخول - النظام الجامعي المطور</title>
+
+    <!-- خط Cairo وأيقونات FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+            -webkit-tap-highlight-color: transparent; /* إلغاء التظليل عند اللمس في الهواتف */
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background-color: #f4f7fe;
+            align-items: center;
+            justify-content: center;
+        }
+
+
+
+
+        
+        .login-container {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        /* 1. الجانب الأيسر: الصورة والترحيب (للكمبيوتر والتابلت الكبير) */
+        .hero-section {
+            flex: 1.2;
+            background: linear-gradient(135deg, rgba(26, 34, 126, 0.678), rgba(13, 72, 161, 0.527)), 
+                        url('OIP.webp') center/cover no-repeat;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .hero-section h1 {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .hero-section p {
+            font-size: 1rem;
+            opacity: 0.9;
+            max-width: 420px;
+            line-height: 1.6;
+        }
+
+        /* 2. الجانب الأيمن: نموذج الدخول */
+        .form-section {
+            flex: 1;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 30px;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 380px;
+        }
+
+        .login-card h2 {
+            color: #1a237e;
+            font-size: 1.75rem;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .login-card p.subtitle {
+            color: #718096;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+        }
+
+        /* رسالة الخطأ */
+        .error-message {
+            display: none;
+            background-color: #fff5f5;
+            color: #e53e3e;
+            border: 1px solid #feb2b2;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 0.88rem;
+            text-align: center;
+            font-weight: 600;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* الحقول والمدخلات */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2d3748;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            height: 50px; /* ارتفاع مناسب جداً للمس باليد */
+            padding: 0 45px 0 45px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px; /* يمنع الزوم التلقائي في أجهزة الآيفون */
+            color: #2d3748;
+            transition: all 0.3s ease;
+            outline: none;
+            background-color: #f8fafc;
+        }
+
+        .input-wrapper input:focus {
+            border-color: #1a237e;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 4px rgba(26, 35, 126, 0.1);
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 15px;
+            color: #4488e0;
+            font-size: 1.1rem;
+            pointer-events: none;
+        }
+
+        /* أيقونة العين للرؤية */
+        .toggle-password {
+            position: absolute;
+            left: 12px;
+            padding: 10px; /* تكبير المنطقة القابلة للضغط */
+            color: #a0aec0;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: color 0.2s;
+        }
+
+        .toggle-password:hover,
+        .toggle-password:active {
+            color: #1a237e;
+        }
+
+        /* الخيارات والإعدادات */
+        .options-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            font-size: 0.88rem;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #4a5568;
+            cursor: pointer;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #1a237e;
+            cursor: pointer;
+        }
+
+        .forgot-password {
+            color: #1a237e;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        /* زر تسجيل الدخول */
+        .btn-submit {
+            width: 100%;
+            height: 52px;
+            background-color: #1a237e;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 14px rgba(26, 35, 126, 0.25);
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        /* ========================================================== */
+        /* تعديلات مخصصة للتابلت (Tablets: 601px - 1024px) */
+        /* ========================================================== */
+        @media (max-width: 1024px) {
+            .hero-section {
+                padding: 30px 20px;
+            }
+            .hero-section h1 {
+                font-size: 1.8rem;
+            }
+            .form-section {
+                padding: 30px 20px;
+            }
+        }
+
+        /* ========================================================== */
+        /* تعديلات مخصصة للهواتف المحمولة (Mobile: أقل من 768px) */
+        /* ========================================================== */
+        @media (max-width: 768px) {
+            .login-container {
+                flex-direction: column;
+                min-height: 100vh;
+                background-color: #f4f7fe;
+            }
+
+            /* تحويل الهيدر إلى غلاف علوي أنيق للهاتف */
+            .hero-section {
+                flex: none;
+                width: 100%;
+                height: 200px;
+                border-radius: 0 0 25px 25px;
+                padding: 20px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            }
+
+            .hero-section h1 {
+                font-size: 1.5rem;
+                margin-bottom: 6px;
+            }
+
+            .hero-section p {
+                font-size: 0.85rem;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+
+            .form-section {
+                flex: 1;
+                width: 100%;
+                padding: 25px 20px;
+                align-items: flex-start;
+            }
+
+            .login-card {
+                background: #ffffff;
+                padding: 25px 20px;
+                border-radius: 20px;
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+                margin-top: -30px; /* رفع الكارت للأعلى قليلاً لتداخل جذاب */
+                z-index: 10;
+            }
+
+            .login-card h2 {
+                font-size: 1.5rem;
+                text-align: center;
+            }
+
+            .login-card p.subtitle {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+
+
+
+
+    <div class="login-container">
+        <!-- الجانب الأيسر (صورة الترحيب والهوية) -->
+        <div class="hero-section">
+            <h1>البوابة الأكاديمية الذكية</h1>
+            <p>مرحبًا بك في النظام الجامعي المطور. قم بتسجيل الدخول للوصول إلى كافة الخدمات والنتائج بكل سهولة وأمان.</p>
+        </div>
+
+        <!-- الجانب الأيمن (نموذج الدخول) -->
+        <div class="form-section">
+            <div class="login-card">
+                <h2>تسجيل الدخول</h2>
+                <p class="subtitle">أدخل بيانات الحساب للمتابعة</p>
+
+                <!-- رسالة الخطأ -->
+                <div id="errorMessage" class="error-message"></div>
+
+                <form id="loginForm">
+                    <!-- اسم المستخدم -->
+                    <div class="input-group">
+                        <label for="username">اسم المستخدم</label>
+                        <div class="input-wrapper">
+                            <i class="fa-regular fa-user input-icon"></i>
+                            <input type="text" id="username" placeholder="أدخل اسم المستخدم" required autocomplete="off">
+                        </div>
+                    </div>
+
+                    <!-- كلمة السر -->
+                    <div class="input-group">
+                        <label for="password">كلمة السر</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-lock input-icon"></i>
+                            <input type="password" id="password" placeholder="أدخل كلمة السر" required>
+                            <i class="fa-regular fa-eye toggle-password" id="togglePassword"></i>
+                        </div>
+                    </div>
+
+                    <!-- خيارات الحفظ والنسيان -->
+                    <div class="options-row">
+                        <label class="remember-me">
+                            <input type="checkbox">
+                            <span>تذكرني</span>
+                        </label>
+                        <a href="#" class="forgot-password">نسيت كلمة السر؟</a>
+                    </div>
+
+                    <!-- زر الدخول -->
+                    <button type="submit" class="btn-submit">تسجيل الدخول</button>
+                </form>
+            </div>
+        </div>
+    </div>
+<!-- كود جافا سكربت -->
+    <script>
+        const togglePassword = document.querySelector('#togglePassword');
+        const passwordInput = document.querySelector('#password');
+
+        togglePassword.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            // تبديل أيقونة العين
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+
+        // 2. البرمجة والتحقق من admin / 1234
+        const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+
+        loginForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (username === 'admin' && password === '1234') {
+                errorMessage.style.display = 'none';
+                window.location.href = 'main.html';
+            } else {
+              
+                errorMessage.textContent = 'اسم المستخدم أو كلمة السر غير صحيحة!';
+                errorMessage.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
